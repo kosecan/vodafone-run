@@ -291,7 +291,7 @@ export default function VodafoneRunner() {
             spawn();
             // Zorluk mesafeye bağlı — hız kapına ulaşılsa bile gap daralmaya devam eder
             const difficulty = Math.min(1, state.dist / 40000); // ~40k px'de zirve
-            const reactionTime = 0.95 - 0.45 * difficulty;     // 0.95s → 0.50s
+            const reactionTime = 1.05 - 0.45 * difficulty;     // 1.05s → 0.60s
             const minGap = state.speed * reactionTime;
             const maxGap = state.speed * (2.00 - 1.15 * difficulty); // 2.00 → 0.85
             state.spawnDist = minGap + Math.random() * (maxGap - minGap);
