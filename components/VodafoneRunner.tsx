@@ -209,10 +209,7 @@ export default function VodafoneRunner() {
       } else {
         w = 52; h = 52;
         el.innerHTML = `
-          <div style="position:relative;width:${w}px;height:${h}px;border:3px solid #1a1a1a;border-radius:8px;background:linear-gradient(180deg,#ff3b3b,#cc0000);box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);overflow:hidden;">
-            <div style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(255,255,255,0.85);transform:rotate(45deg);transform-origin:center;"></div>
-            <div style="position:absolute;top:50%;left:0;width:100%;height:2px;background:rgba(255,255,255,0.85);transform:rotate(-45deg);transform-origin:center;"></div>
-          </div>`;
+          <div style="position:relative;width:${w}px;height:${h}px;border:3px solid #1a1a1a;border-radius:8px;overflow:hidden;background:repeating-linear-gradient(45deg,#E60000 0 13px,#fff 13px 26px);box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);"></div>`;
       }
 
       obstaclesRef.current?.appendChild(el);
