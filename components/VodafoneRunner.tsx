@@ -518,7 +518,6 @@ export default function VodafoneRunner() {
           position: 'absolute',
           left: 0,
           top: 0,
-          width: '1000px',
           height: '600px',
           transformOrigin: '0 0',
           overflow: 'hidden',
