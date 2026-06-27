@@ -127,12 +127,14 @@ export default function VodafoneRunner() {
       }
       g.current.paused = false;
       if (rot) rot.style.display = 'none';
-      const s = vh / 600;
+      const scaleX = vw / 1000;
+      const scaleY = vh / 600;
+      const s = Math.max(scaleX, scaleY);
       g.current.worldW = Math.ceil(vw / s);
       const stage = stageRef.current;
       if (stage) {
         stage.style.width = g.current.worldW + 'px';
-        stage.style.transform = `scale(${s})`;
+        stage.style.transform = `translate(-50%, -50%) scale(${s})`;
       }
     }
 
@@ -514,11 +516,11 @@ export default function VodafoneRunner() {
         ref={stageRef}
         style={{
           position: 'absolute',
-          left: 0,
-          top: 0,
+          left: '50%',
+          top: '50%',
           width: '1000px',
           height: '600px',
-          transformOrigin: '0 0',
+          transformOrigin: 'center center',
           overflow: 'hidden',
           cursor: 'pointer',
           userSelect: 'none',
