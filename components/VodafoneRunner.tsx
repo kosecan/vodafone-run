@@ -33,7 +33,7 @@ const PLAYER_H = 160;
 const HB_LEFT = 162;
 const HB_W = 58;
 const GRAVITY = 3150;
-const JUMP_V = 1260;
+const JUMP_V = 1100;
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
