@@ -508,7 +508,7 @@ export default function VodafoneRunner() {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: '#bfe8ff' }}>
+    <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: 'linear-gradient(180deg, #bfe8ff 0%, #dff4ff 45%, #ffe9e6 100%)' }}>
       {/* ── Stage ──────────────────────────────────────────────────────────── */}
       <div
         ref={stageRef}
