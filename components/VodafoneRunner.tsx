@@ -117,8 +117,8 @@ export default function VodafoneRunner() {
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     function fit() {
-      const vw = document.documentElement.clientWidth;
-      const vh = document.documentElement.clientHeight;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
       const rot = rotateRef.current;
       if (vh > vw) {
         g.current.paused = true;
@@ -488,7 +488,7 @@ export default function VodafoneRunner() {
     };
 
     window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
+    window.addEventListener('orientationchange', () => setTimeout(onResize, 300));
     window.addEventListener('keydown', onKey);
     window.addEventListener('pointerdown', onPointer, { passive: false });
 
