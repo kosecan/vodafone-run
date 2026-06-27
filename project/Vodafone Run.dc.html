@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; width: 100%; background: #bfe8ff; overflow: hidden; font-family: 'Outfit', sans-serif; position: fixed; inset: 0; touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  @keyframes vfr-rot { 0%,38% { transform: rotate(0deg); } 60%,100% { transform: rotate(-90deg); } }
+  @keyframes vfr-cloud { from { transform: translateX(0); } to { transform: translateX(-1200px); } }
+  @keyframes vfr-pop { 0% { transform: scale(.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes vfr-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes vfr-blink { 0%,49% { opacity: 1; } 50%,100% { opacity: .25; } }
+  @keyframes vfr-sun { 0%,100% { box-shadow: 0 0 60px 18px rgba(255,210,120,.55); } 50% { box-shadow: 0 0 84px 30px rgba(255,210,120,.7); } }
+</style>
+</helmet>
+<div style="position:fixed; inset:0; overflow:hidden; background:#bfe8ff;">
+  <div id="vfr-stage" style="position:absolute; left:0; top:0; width:1000px; height:600px; transform-origin:0 0; overflow:hidden; cursor:pointer; user-select:none;">
+
+    <!-- sky -->
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, #bfe8ff 0%, #dff4ff 45%, #ffe9e6 100%);"></div>
+    <div style="position:absolute; left:760px; top:78px; width:96px; height:96px; border-radius:50%; background:radial-gradient(circle at 38% 36%, #fff6db, #ffd56b); animation:vfr-sun 4s ease-in-out infinite;"></div>
+
+    <!-- clouds -->
+    <div id="vfr-clouds" style="position:absolute; top:0; left:0; width:200%; height:240px;">
+      <div style="position:absolute; left:120px; top:60px; width:150px; height:46px; border-radius:30px; background:#ffffff; opacity:.92; box-shadow:60px 8px 0 -6px #fff, -46px 10px 0 -10px #fff;"></div>
+      <div style="position:absolute; left:520px; top:120px; width:120px; height:38px; border-radius:30px; background:#ffffff; opacity:.85; box-shadow:48px 8px 0 -6px #fff;"></div>
+      <div style="position:absolute; left:1120px; top:70px; width:160px; height:48px; border-radius:30px; background:#fff; opacity:.9; box-shadow:64px 10px 0 -6px #fff, -50px 12px 0 -12px #fff;"></div>
+      <div style="position:absolute; left:1560px; top:140px; width:110px; height:36px; border-radius:30px; background:#fff; opacity:.8;"></div>
+    </div>
+
+    <!-- far skyline -->
+    <div id="vfr-far" style="position:absolute; left:0; bottom:96px; width:300%; height:230px; background-repeat:repeat-x; background-size:520px 230px; background-image:url('assets/far.svg'); opacity:.85;"></div>
+
+    <!-- mid skyline -->
+    <div id="vfr-mid" style="position:absolute; left:0; bottom:96px; width:300%; height:180px; background-repeat:repeat-x; background-size:460px 180px; background-image:url('assets/mid.svg');"></div>
+
+    <!-- bushes -->
+    <div id="vfr-bush" style="position:absolute; left:0; bottom:90px; width:300%; height:80px; background-repeat:repeat-x; background-size:320px 80px; background-image:url('assets/bush.svg');"></div>
+
+    <!-- ground -->
+    <div style="position:absolute; left:0; bottom:0; width:100%; height:96px; background:linear-gradient(180deg, #3a3f4a 0%, #2b2f38 100%); box-shadow:inset 0 6px 0 #54a0e8;"></div>
+    <div id="vfr-ground" style="position:absolute; left:0; bottom:42px; width:300%; height:8px; background-repeat:repeat-x; background-size:120px 8px; background-image:linear-gradient(90deg, #f4c20d 0 60px, transparent 60px 120px);"></div>
+
+    <!-- obstacles get injected here -->
+    <div id="vfr-obstacles" style="position:absolute; inset:0; z-index:4; pointer-events:none;"></div>
+
+    <!-- ground shadow (stays on ground during jumps) -->
+    <div id="vfr-shadow" style="position:absolute; left:150px; bottom:84px; width:90px; height:22px; z-index:4; border-radius:50%; background:radial-gradient(ellipse at center, rgba(0,0,0,.34) 0%, rgba(0,0,0,.18) 46%, rgba(0,0,0,0) 72%); pointer-events:none; transform-origin:center center;"></div>
+
+    <!-- player -->
+    <img id="vfr-player" src="assets/run0.png" alt="Vodafone runner" style="position:absolute; left:130px; bottom:96px; height:160px; width:auto; z-index:5; image-rendering:auto; transform-origin:50% 100%; pointer-events:none;">
+
+    <!-- HUD -->
+    <div style="position:absolute; left:22px; top:18px; z-index:8; display:flex; align-items:center; gap:12px;">
+      <img src="assets/logo.png" alt="Vodafone" style="width:46px; height:46px; filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));">
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <span style="font-family:'Press Start 2P',monospace; font-size:9px; letter-spacing:1px; color:#7a1212;">SKOR</span>
+        <span id="vfr-score" style="font-family:'Press Start 2P',monospace; font-size:20px; color:#E60000; text-shadow:0 2px 0 rgba(0,0,0,.12);">0</span>
+      </div>
+    </div>
+    <div style="position:absolute; right:22px; top:18px; z-index:8; display:flex; flex-direction:column; align-items:flex-end; gap:3px;">
+      <span style="font-family:'Press Start 2P',monospace; font-size:9px; letter-spacing:1px; color:#555;">EN İYİ</span>
+      <span id="vfr-best" style="font-family:'Press Start 2P',monospace; font-size:14px; color:#1a1a1a;">0</span>
+    </div>
+
+    <!-- READY screen -->
+    <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute; inset:0; z-index:9; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; background:rgba(255,255,255,.18); backdrop-filter:blur(1px);">
+        <div style="display:flex; align-items:center; gap:16px; animation:vfr-bob 2.4s ease-in-out infinite;">
+          <img src="assets/logo.png" alt="Vodafone" style="width:64px; height:64px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));">
+          <h1 style="font-family:'Press Start 2P',monospace; font-size:34px; line-height:1.2; color:#E60000; text-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 18px rgba(230,0,0,.25);">VODAFONE<br><span style="color:#1a1a1a;">RUN</span></h1>
+        </div>
+        <p style="font-family:'Outfit'; font-weight:600; font-size:19px; color:#2a2f38;">Engellerden zıpla, mümkün olduğunca koş!</p>
+        <div style="display:flex; align-items:center; gap:10px; padding:13px 24px; border-radius:999px; background:#E60000; box-shadow:0 8px 0 #9c0000, 0 14px 26px rgba(230,0,0,.4); animation:vfr-blink 1.3s steps(1) infinite;">
+          <span style="font-family:'Press Start 2P',monospace; font-size:11px; color:#fff;">BAŞLAMAK İÇİN BOŞLUK / DOKUN</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- GAME OVER screen -->
+    <sc-if value="{{ isOver }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute; inset:0; z-index:9; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:rgba(10,12,18,.62); backdrop-filter:blur(2px); animation:vfr-pop .25s ease both;">
+        <h1 style="font-family:'Press Start 2P',monospace; font-size:32px; color:#E60000; text-shadow:0 4px 0 rgba(0,0,0,.5);">OYUN BİTTİ</h1>
+        <div style="display:flex; gap:40px; align-items:flex-end;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <span style="font-family:'Press Start 2P',monospace; font-size:10px; color:#ff8a8a;">SKOR</span>
+            <span style="font-family:'Press Start 2P',monospace; font-size:30px; color:#fff;">{{ score }}</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <span style="font-family:'Press Start 2P',monospace; font-size:10px; color:#9fd0ff;">EN İYİ</span>
+            <span style="font-family:'Press Start 2P',monospace; font-size:30px; color:#fff;">{{ best }}</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:6px; padding:13px 26px; border-radius:999px; background:#E60000; box-shadow:0 8px 0 #9c0000, 0 14px 26px rgba(230,0,0,.45); animation:vfr-blink 1.1s steps(1) infinite;">
+          <span style="font-family:'Press Start 2P',monospace; font-size:11px; color:#fff;">TEKRAR OYNA ↺</span>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <!-- portrait rotate prompt (mobile) -->
+  <div id="vfr-rotate" style="position:absolute; inset:0; z-index:50; display:none; flex-direction:column; align-items:center; justify-content:center; gap:24px; background:#0a0c12; text-align:center; padding:30px;">
+    <img src="assets/logo.png" alt="Vodafone" style="width:54px; height:54px;">
+    <div style="width:60px; height:100px; border:5px solid #fff; border-radius:13px; position:relative; animation:vfr-rot 2.2s ease-in-out infinite;">
+      <div style="position:absolute; left:50%; bottom:7px; transform:translateX(-50%); width:13px; height:13px; border:3px solid #fff; border-radius:50%;"></div>
+    </div>
+    <p style="font-family:'Press Start 2P',monospace; font-size:14px; line-height:1.7; color:#E60000;">TELEFONU<br>YAN ÇEVİR</p>
+    <p style="font-family:'Outfit',sans-serif; font-weight:600; font-size:16px; color:#cdd3dd;">Oyun yatay modda oynanır</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { status: 'ready', score: 0, best: 0 };
+
+  componentDidMount() {
+    this.frames = ['assets/run0.png','assets/run1.png','assets/run2.png','assets/run3.png','assets/run4.png'];
+    this.frames.forEach(s => { const im = new Image(); im.src = s; });
+
+    // ground geometry (logical px)
+    this.GROUND_TOP = 504;       // y from top where ground surface is
+    this.PLAYER_H = 160;
+    this.PLAYER_W = 119;
+    this.HB_LEFT = 162;          // hitbox left (player left 130 + inset)
+    this.HB_W = 58;
+
+    // physics (px / s)
+    this.GRAVITY = 2700;
+    this.JUMP_V = 1080;
+
+    this.reset(false);
+
+    try { this.setState({ best: parseInt(localStorage.getItem('vfr_best')||'0',10) || 0 }); } catch(e) {}
+
+    this.worldW = 1000;
+    this.paused = false;
+    this.onResize = () => this.fit();
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('orientationchange', this.onResize);
+    this.onKey = (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+        e.preventDefault();
+        if (!e.repeat) this.input();
+      }
+    };
+    window.addEventListener('keydown', this.onKey);
+    // unified mouse + touch + pen input
+    this.onPointer = (e) => { e.preventDefault(); this.input(); };
+    window.addEventListener('pointerdown', this.onPointer, { passive: false });
+
+    this.fit();
+    this.last = performance.now();
+    this.raf = requestAnimationFrame(this.loop);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('orientationchange', this.onResize);
+    window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('pointerdown', this.onPointer);
+  }
+
+  fit = () => {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const stage = document.getElementById('vfr-stage');
+    const rot = document.getElementById('vfr-rotate');
+    // side-scroller plays in landscape — ask portrait phones to rotate
+    if (vh > vw) {
+      this.paused = true;
+      if (rot) rot.style.display = 'flex';
+      return;
+    }
+    this.paused = false;
+    if (rot) rot.style.display = 'none';
+    const s = vh / 600;                          // fit height, fill the screen edge-to-edge
+    this.worldW = Math.ceil(vw / s);             // logical width follows the viewport aspect
+    if (stage) {
+      stage.style.width = this.worldW + 'px';
+      stage.style.transform = `scale(${s})`;
+    }
+  };
+
+  reset(clearObs) {
+    this.speed = 360;
+    this.dist = 0;
+    this.scoreF = 0;
+    this.y = 0;            // height above ground
+    this.vy = 0;
+    this.grounded = true;
+    this.frame = 0;
+    this.frameTimer = 0;
+    this.spawnDist = 520;
+    this.bgFar = 0; this.bgMid = 0; this.bgBush = 0; this.bgGround = 0; this.bgCloud = 0;
+    if (clearObs !== false) {
+      this.obstacles = [];
+      const c = document.getElementById('vfr-obstacles');
+      if (c) c.innerHTML = '';
+    } else if (!this.obstacles) {
+      this.obstacles = [];
+    }
+    const sc = document.getElementById('vfr-score');
+    if (sc) sc.textContent = '0';
+  }
+
+  input() {
+    const st = this.state.status;
+    if (st === 'ready') {
+      this.reset(true);
+      this.setState({ status: 'playing', score: 0 });
+    } else if (st === 'playing') {
+      if (this.grounded) { this.vy = this.JUMP_V; this.grounded = false; }
+    } else if (st === 'over') {
+      this.reset(true);
+      this.setState({ status: 'playing', score: 0 });
+    }
+  }
+
+  onTap = () => this.input();
+
+  spawn() {
+    const types = ['cone','hurdle','crate','cone'];
+    const t = types[(Math.random()*types.length)|0];
+    const el = document.createElement('div');
+    el.style.cssText = 'position:absolute; bottom:96px; left:0; will-change:transform;';
+    let w, h;
+    if (t === 'cone') {
+      w = 46; h = 56;
+      el.innerHTML = `<div style="position:relative; width:${w}px; height:${h}px; overflow:hidden; clip-path:polygon(50% 0,100% 100%,0 100%); background:linear-gradient(180deg,#ff6a32,#e63100);">
+        <div style="position:absolute; top:34%; left:-10%; width:120%; height:8px; background:#fff;"></div>
+        <div style="position:absolute; top:62%; left:-10%; width:120%; height:9px; background:#fff;"></div></div>
+        <div style="position:absolute; bottom:-4px; left:-6px; width:${w+12}px; height:9px; border-radius:4px; background:#1f1f1f;"></div>`;
+    } else if (t === 'hurdle') {
+      w = 58; h = 80;
+      el.innerHTML = `<div style="position:relative; width:${w}px; height:${h}px;">
+        <div style="position:absolute; left:4px; bottom:0; width:7px; height:${h}px; background:#1f1f1f; border-radius:3px;"></div>
+        <div style="position:absolute; right:4px; bottom:0; width:7px; height:${h}px; background:#1f1f1f; border-radius:3px;"></div>
+        <div style="position:absolute; left:0; top:6px; width:${w}px; height:24px; border:3px solid #1a1a1a; border-radius:4px; background:repeating-linear-gradient(45deg,#E60000 0 13px,#fff 13px 26px);"></div></div>`;
+    } else {
+      w = 52; h = 52;
+      el.innerHTML = `<div style="position:relative; width:${w}px; height:${h}px; border:3px solid #1a1a1a; border-radius:8px; background:linear-gradient(180deg,#ff3b3b,#cc0000); box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);">
+        <div style="position:absolute; inset:0; margin:auto; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:inset 0 0 0 5px #E60000;"></div></div>`;
+    }
+    document.getElementById('vfr-obstacles').appendChild(el);
+    this.obstacles.push({ el, x: (this.worldW || 1000) + 60, w, h, scored: false });
+  }
+
+  loop = (now) => {
+    let dt = (now - this.last) / 1000;
+    this.last = now;
+    if (dt > 0.05) dt = 0.05;
+    if (this.paused) { this.raf = requestAnimationFrame(this.loop); return; }
+    const playing = this.state.status === 'playing';
+    const over = this.state.status === 'over';
+
+    if (playing) {
+      this.speed = Math.min(820, this.speed + 9 * dt);
+      this.dist += this.speed * dt;
+      this.scoreF += this.speed * dt * 0.025;
+
+      // jump physics
+      if (!this.grounded) {
+        this.vy -= this.GRAVITY * dt;
+        this.y += this.vy * dt;
+        if (this.y <= 0) { this.y = 0; this.vy = 0; this.grounded = true; }
+      }
+
+      // spawn
+      this.spawnDist -= this.speed * dt;
+      if (this.spawnDist <= 0) {
+        this.spawn();
+        const minGap = this.speed * 0.95;
+        const maxGap = this.speed * 1.75;
+        this.spawnDist = minGap + Math.random() * (maxGap - minGap);
+      }
+
+      // move obstacles + collision
+      const pL = this.HB_LEFT, pR = this.HB_LEFT + this.HB_W;
+      const pBot = this.GROUND_TOP - this.y;
+      const pTop = pBot - (this.PLAYER_H - 34);
+      for (let i = this.obstacles.length - 1; i >= 0; i--) {
+        const o = this.obstacles[i];
+        o.x -= this.speed * dt;
+        o.el.style.transform = `translateX(${o.x}px)`;
+        const oL = o.x, oR = o.x + o.w;
+        const oTop = this.GROUND_TOP - o.h;
+        if (pR > oL && pL < oR && pBot > oTop && pTop < this.GROUND_TOP) {
+          this.gameOver();
+          break;
+        }
+        if (o.x + o.w < -40) { o.el.remove(); this.obstacles.splice(i, 1); }
+      }
+
+      // score HUD
+      const sc = document.getElementById('vfr-score');
+      if (sc) sc.textContent = String(Math.floor(this.scoreF));
+    }
+
+    // background scroll
+    const sp = playing ? this.speed : (this.state.status === 'ready' ? 90 : 0);
+    if (sp > 0) {
+      this.bgGround = (this.bgGround - sp * dt) % 120;
+      this.bgBush = (this.bgBush - sp * 0.7 * dt) % 320;
+      this.bgMid = (this.bgMid - sp * 0.42 * dt) % 460;
+      this.bgFar = (this.bgFar - sp * 0.22 * dt) % 520;
+      const g = document.getElementById('vfr-ground'); if (g) g.style.backgroundPositionX = this.bgGround + 'px';
+      const b = document.getElementById('vfr-bush'); if (b) b.style.backgroundPositionX = this.bgBush + 'px';
+      const m = document.getElementById('vfr-mid'); if (m) m.style.backgroundPositionX = this.bgMid + 'px';
+      const f = document.getElementById('vfr-far'); if (f) f.style.backgroundPositionX = this.bgFar + 'px';
+      this.bgCloud = (this.bgCloud - sp * 0.12 * dt) % 1000;
+      const cl = document.getElementById('vfr-clouds'); if (cl) cl.style.transform = `translateX(${this.bgCloud}px)`;
+    }
+
+    // player sprite
+    const sh = document.getElementById('vfr-shadow');
+    if (sh) {
+      const k = Math.max(0, Math.min(1, this.y / 240));
+      const sc = 1 - 0.5 * k;
+      sh.style.transform = `scale(${sc})`;
+      sh.style.opacity = String(0.34 - 0.22 * k);
+    }
+    const p = document.getElementById('vfr-player');
+    if (p) {
+      let rot = 0;
+      if (over) {
+        p.src = this.frames[0];
+      } else if (!this.grounded && playing) {
+        // airborne: push-off stride going up, gather/land pose coming down
+        p.src = this.vy > 0 ? this.frames[3] : this.frames[0];
+        rot = this.vy > 0 ? -6 : 5;
+      } else {
+        // running: cycle the 5-frame stride — limbs swing via the artwork, body stays steady
+        this.frameTimer += dt * 1000;
+        const interval = Math.max(58, 112 - (this.speed - 360) * 0.07);
+        if (this.frameTimer >= interval) {
+          this.frameTimer = 0;
+          this.frame = (this.frame + 1) % 5;
+          p.src = this.frames[this.frame];
+        }
+      }
+      p.style.transform = `translateY(${-this.y}px) rotate(${rot}deg)`;
+    }
+
+    this.raf = requestAnimationFrame(this.loop);
+  };
+
+  gameOver() {
+    const final = Math.floor(this.scoreF);
+    let best = this.state.best;
+    if (final > best) {
+      best = final;
+      try { localStorage.setItem('vfr_best', String(best)); } catch(e) {}
+      const be = document.getElementById('vfr-best'); if (be) be.textContent = String(best);
+    }
+    this.setState({ status: 'over', score: final, best });
+  }
+
+  renderVals() {
+    return {
+      isReady: this.state.status === 'ready',
+      isOver: this.state.status === 'over',
+      score: this.state.score,
+      best: this.state.best,
+      onTap: this.onTap,
+    };
+  }
+}
+</script>
+</body>
+</html>
