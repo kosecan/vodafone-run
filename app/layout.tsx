@@ -19,6 +19,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: 'Vodafone Run',
   description: 'Engellerden zıpla, mümkün olduğunca koş!',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
