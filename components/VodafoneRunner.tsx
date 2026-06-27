@@ -822,7 +822,7 @@ export default function VodafoneRunner() {
           TELEFONU<br />YAN ÇEVİR
         </p>
         <p style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: 16, color: '#cdd3dd' }}>
-          Oyun yatay modda oynanır
+          Oynamak için telefonu yan çevirin
         </p>
       </div>
     </div>
