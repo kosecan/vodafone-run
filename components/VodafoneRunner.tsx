@@ -239,7 +239,7 @@ export default function VodafoneRunner() {
     function collectEffect() {
       const el = document.createElement('img') as HTMLImageElement;
       el.src = '/assets/wifi-good.svg';
-      el.style.cssText = `position:absolute;left:${HB_LEFT}px;bottom:110px;width:48px;height:48px;object-fit:contain;pointer-events:none;z-index:9;animation:vfr-collect 0.55s ease forwards;`;
+      el.style.cssText = `position:absolute;left:${HB_LEFT}px;bottom:110px;width:48px;height:48px;object-fit:contain;pointer-events:none;z-index:9;animation:vfr-collect 0.55s ease forwards;filter:drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);`;
       stageRef.current?.appendChild(el);
       setTimeout(() => el.remove(), 560);
     }
