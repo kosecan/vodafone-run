@@ -117,8 +117,8 @@ export default function VodafoneRunner() {
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     function fit() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
+      const vw = window.visualViewport?.width ?? window.innerWidth;
+      const vh = window.visualViewport?.height ?? window.innerHeight;
       const rot = rotateRef.current;
       if (vh > vw) {
         g.current.paused = true;
@@ -492,6 +492,7 @@ export default function VodafoneRunner() {
     window.addEventListener('pointerdown', onPointer, { passive: false });
 
     fit();
+    setTimeout(fit, 100);
     g.current.last = performance.now();
     rafRef.current = requestAnimationFrame(loop);
 
