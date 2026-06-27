@@ -117,8 +117,8 @@ export default function VodafoneRunner() {
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     function fit() {
-      const vw = window.visualViewport?.width ?? window.innerWidth;
-      const vh = window.visualViewport?.height ?? window.innerHeight;
+      const vw = document.documentElement.clientWidth;
+      const vh = document.documentElement.clientHeight;
       const rot = rotateRef.current;
       if (vh > vw) {
         g.current.paused = true;
@@ -128,10 +128,11 @@ export default function VodafoneRunner() {
       g.current.paused = false;
       if (rot) rot.style.display = 'none';
       const s = vh / 600;
-      g.current.worldW = Math.ceil(vw / s);
+      g.current.worldW = Math.ceil(vw / s) + 2;
       const stage = stageRef.current;
       if (stage) {
         stage.style.width = g.current.worldW + 'px';
+        stage.style.transformOrigin = '0 0';
         stage.style.transform = `scale(${s})`;
       }
     }
