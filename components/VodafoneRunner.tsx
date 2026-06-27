@@ -803,20 +803,27 @@ export default function VodafoneRunner() {
         <img src="/assets/logo.png" alt="Vodafone" style={{ width: 54, height: 54 }} />
         <div
           style={{
-            width: 60, height: 100,
-            border: '5px solid #fff', borderRadius: 13,
+            width: 62, height: 108,
+            border: '4px solid #fff', borderRadius: 16,
             position: 'relative',
+            background: 'rgba(255,255,255,0.05)',
             animation: 'vfr-rot 2.2s ease-in-out infinite',
           }}
         >
-          <div
-            style={{
-              position: 'absolute', left: '50%', bottom: 7,
-              transform: 'translateX(-50%)',
-              width: 13, height: 13,
-              border: '3px solid #fff', borderRadius: '50%',
-            }}
-          />
+          {/* Dynamic Island çentiği */}
+          <div style={{
+            position: 'absolute', top: 7, left: '50%',
+            transform: 'translateX(-50%)',
+            width: 20, height: 6,
+            background: '#fff', borderRadius: 4,
+          }} />
+          {/* Ev çubuğu */}
+          <div style={{
+            position: 'absolute', bottom: 7, left: '50%',
+            transform: 'translateX(-50%)',
+            width: 24, height: 3,
+            background: '#fff', borderRadius: 2,
+          }} />
         </div>
         <p style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, lineHeight: 1.7, color: '#E60000' }}>
           TELEFONU<br />YAN ÇEVİR
