@@ -458,7 +458,6 @@ export default function VodafoneRunner() {
               p.src = state.vy > 0 ? JUMP_FRAMES[0] : JUMP_FRAMES[3];
             }
             p.style.height = '160px';
-            rot = state.vy > 0 ? -6 : 5;
           } else {
             state.frameTimer += dt * 1000;
             const interval = Math.max(58, 112 - (state.speed - 360) * 0.07);
@@ -678,9 +677,7 @@ export default function VodafoneRunner() {
           alt="Vodafone runner"
           style={{
             position: 'absolute', left: 130, bottom: 96,
-            height: 160, width: 160,
-            objectFit: 'contain',
-            objectPosition: 'bottom center',
+            height: 160, width: 'auto',
             zIndex: 5,
             transformOrigin: '50% 100%',
             pointerEvents: 'none',
