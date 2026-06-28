@@ -296,7 +296,6 @@ export default function VodafoneRunner() {
               state.grounded = true;
               state.doubleJumped = false;
               state.isDoubleJumping = false;
-              if (playerRef.current) playerRef.current.style.height = '160px';
             }
           }
 
@@ -454,11 +453,10 @@ export default function VodafoneRunner() {
             if (state.isDoubleJumping) {
               const jumpIdx = state.vy > 200 ? 0 : state.vy > -200 ? 1 : 2;
               p.src = JUMP_FRAMES[jumpIdx];
-              p.style.height = '200px';
             } else {
               p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
-              p.style.height = '160px';
             }
+            p.style.height = '160px';
             rot = state.vy > 0 ? -6 : 5;
           } else {
             state.frameTimer += dt * 1000;
@@ -679,7 +677,8 @@ export default function VodafoneRunner() {
           alt="Vodafone runner"
           style={{
             position: 'absolute', left: 130, bottom: 96,
-            height: 160, width: 'auto',
+            height: 160, width: 160,
+            objectFit: 'contain',
             zIndex: 5,
             transformOrigin: '50% 100%',
             pointerEvents: 'none',
