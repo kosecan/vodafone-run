@@ -296,6 +296,7 @@ export default function VodafoneRunner() {
               state.grounded = true;
               state.doubleJumped = false;
               state.isDoubleJumping = false;
+              if (playerRef.current) playerRef.current.style.height = '160px';
             }
           }
 
@@ -453,8 +454,10 @@ export default function VodafoneRunner() {
             if (state.isDoubleJumping) {
               const jumpIdx = state.vy > 200 ? 0 : state.vy > -200 ? 1 : 2;
               p.src = JUMP_FRAMES[jumpIdx];
+              p.style.height = '200px';
             } else {
               p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
+              p.style.height = '160px';
             }
             rot = state.vy > 0 ? -6 : 5;
           } else {
