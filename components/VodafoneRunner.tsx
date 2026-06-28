@@ -32,6 +32,7 @@ const JUMP_FRAMES = [
   '/assets/jump0.png',
   '/assets/jump1.png',
   '/assets/jump2.png',
+  '/assets/jump3.png',
 ];
 
 const GROUND_TOP = 504;
@@ -451,7 +452,7 @@ export default function VodafoneRunner() {
             p.src = FRAMES[0];
           } else if (!state.grounded && playing) {
             if (state.isDoubleJumping) {
-              const jumpIdx = state.vy > 200 ? 0 : state.vy > -200 ? 1 : 2;
+              const jumpIdx = state.vy > 400 ? 0 : state.vy > 0 ? 1 : state.vy > -400 ? 2 : 3;
               p.src = JUMP_FRAMES[jumpIdx];
             } else {
               p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
