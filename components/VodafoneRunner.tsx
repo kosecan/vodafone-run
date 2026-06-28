@@ -28,6 +28,12 @@ const FRAMES = [
   '/assets/run4.png',
 ];
 
+const JUMP_FRAMES = [
+  '/assets/jump0.png',
+  '/assets/jump1.png',
+  '/assets/jump2.png',
+];
+
 const GROUND_TOP = 504;
 const PLAYER_H = 160;
 const HB_LEFT = 162;
@@ -96,12 +102,15 @@ export default function VodafoneRunner() {
     lastInterval: 0,
     worldW: 1000,
     paused: false,
+    doubleJumped: false,
+    isDoubleJumping: false,
+    lastTapTime: 0,
     last: 0,
   });
 
   useEffect(() => {
     // Preload sprite frames
-    FRAMES.forEach((src) => {
+    [...FRAMES, ...JUMP_FRAMES].forEach((src) => {
       const im = new Image();
       im.src = src;
     });
@@ -155,6 +164,9 @@ export default function VodafoneRunner() {
       state.clouds[0].x = 1100;
       state.clouds[1].x = 1500;
       state.clouds[2].x = 1900;
+      state.doubleJumped = false;
+      state.isDoubleJumping = false;
+      state.lastTapTime = 0;
       state.obstacles = [];
       state.lastObstacleType = '';
       state.collectibles = [];
@@ -282,6 +294,8 @@ export default function VodafoneRunner() {
               state.y = 0;
               state.vy = 0;
               state.grounded = true;
+              state.doubleJumped = false;
+              state.isDoubleJumping = false;
             }
           }
 
@@ -436,7 +450,12 @@ export default function VodafoneRunner() {
           if (over) {
             p.src = FRAMES[0];
           } else if (!state.grounded && playing) {
-            p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
+            if (state.isDoubleJumping) {
+              const jumpIdx = state.vy > 200 ? 0 : state.vy > -200 ? 1 : 2;
+              p.src = JUMP_FRAMES[jumpIdx];
+            } else {
+              p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
+            }
             rot = state.vy > 0 ? -6 : 5;
           } else {
             state.frameTimer += dt * 1000;
@@ -464,9 +483,19 @@ export default function VodafoneRunner() {
         setStatus('playing');
         setScore(0);
       } else if (st === 'playing') {
-        if (g.current.grounded) {
-          g.current.vy = JUMP_V;
-          g.current.grounded = false;
+        const now = performance.now();
+        const state = g.current;
+        if (state.grounded) {
+          state.vy = JUMP_V;
+          state.grounded = false;
+          state.doubleJumped = false;
+          state.isDoubleJumping = false;
+          state.lastTapTime = now;
+        } else if (!state.doubleJumped && now - state.lastTapTime < 500) {
+          // Double jump — takla animasyonu ve daha yüksek zıplama
+          state.vy = JUMP_V * 1.2;
+          state.doubleJumped = true;
+          state.isDoubleJumping = true;
         }
       }
     }
