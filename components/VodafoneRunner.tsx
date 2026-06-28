@@ -680,6 +680,7 @@ export default function VodafoneRunner() {
             position: 'absolute', left: 130, bottom: 96,
             height: 160, width: 160,
             objectFit: 'contain',
+            objectPosition: 'bottom center',
             zIndex: 5,
             transformOrigin: '50% 100%',
             pointerEvents: 'none',
