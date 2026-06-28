@@ -455,7 +455,7 @@ export default function VodafoneRunner() {
               const jumpIdx = state.vy > 400 ? 0 : state.vy > 0 ? 1 : state.vy > -400 ? 2 : 3;
               p.src = JUMP_FRAMES[jumpIdx];
             } else {
-              p.src = state.vy > 0 ? FRAMES[3] : FRAMES[0];
+              p.src = state.vy > 0 ? JUMP_FRAMES[0] : JUMP_FRAMES[3];
             }
             p.style.height = '160px';
             rot = state.vy > 0 ? -6 : 5;
