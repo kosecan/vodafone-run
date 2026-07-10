@@ -173,16 +173,23 @@ export default function VodafoneRunner() {
       src.start();
     }
 
+    let bgLoopTimeout: ReturnType<typeof setTimeout> | null = null;
+
     function startBg() {
-      if (bgStartedRef.current) return;
+      if (bgLoopTimeout) clearTimeout(bgLoopTimeout);
       bgStartedRef.current = true;
       const ctx = getCtx();
-      const gain = ctx.createGain();
-      gain.gain.value = mutedRef.current ? 0 : 0.06;
-      gain.connect(ctx.destination);
-      bgGainRef.current = gain;
+
+      if (!bgGainRef.current) {
+        const gain = ctx.createGain();
+        gain.connect(ctx.destination);
+        bgGainRef.current = gain;
+      }
+      bgGainRef.current.gain.value = mutedRef.current ? 0 : 0.06;
 
       function makeLoop() {
+        if (!bgStartedRef.current) return;
+        const gain = bgGainRef.current!;
         const notes = [220, 246, 261, 293, 220, 196, 220, 246];
         let t = ctx.currentTime;
         notes.forEach(freq => {
@@ -193,7 +200,7 @@ export default function VodafoneRunner() {
           osc.start(t); osc.stop(t + 0.38);
           t += 0.4;
         });
-        setTimeout(makeLoop, notes.length * 400);
+        bgLoopTimeout = setTimeout(makeLoop, notes.length * 400);
       }
       makeLoop();
     }
@@ -338,6 +345,7 @@ export default function VodafoneRunner() {
       }
       playHit();
       bgStartedRef.current = false;
+      if (bgGainRef.current) bgGainRef.current.gain.value = 0;
       statusRef.current = 'over';
       setStatus('over');
       setScore(final);
@@ -550,6 +558,7 @@ export default function VodafoneRunner() {
         statusRef.current = 'playing';
         setStatus('playing');
         setScore(0);
+        startBg();
       } else if (st === 'playing') {
         const now = performance.now();
         const state = g.current;
@@ -557,7 +566,6 @@ export default function VodafoneRunner() {
           state.vy = JUMP_V;
           state.grounded = false;
           playJump();
-          startBg();
         }
       }
     }
@@ -767,20 +775,23 @@ export default function VodafoneRunner() {
                 setMuted(next);
                 if (bgGainRef.current) bgGainRef.current.gain.value = next ? 0 : 0.06;
               }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+              style={{
+                background: 'rgba(0,0,0,0.15)', border: 'none', cursor: 'pointer',
+                padding: '5px 6px', borderRadius: 8, lineHeight: 1, display: 'flex', alignItems: 'center',
+              }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                 {muted ? (
                   <>
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#555"/>
-                    <line x1="23" y1="9" x2="17" y2="15" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
-                    <line x1="17" y1="9" x2="23" y2="15" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
+                    <line x1="23" y1="9" x2="17" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+                    <line x1="17" y1="9" x2="23" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
                   </>
                 ) : (
                   <>
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#555"/>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
                   </>
                 )}
               </svg>
