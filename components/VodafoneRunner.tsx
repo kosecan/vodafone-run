@@ -44,6 +44,12 @@ export default function VodafoneRunner() {
   const [best, setBest] = useState(0);
   const [modemCount, setModemCount] = useState(0);
   const [hasShield, setHasShield] = useState(false);
+  const [muted, setMuted] = useState(false);
+
+  const mutedRef = useRef(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const bgGainRef = useRef<GainNode | null>(null);
+  const bgStartedRef = useRef(false);
 
   // Mirror refs — game loop reads these instead of stale state
   const statusRef = useRef<GameStatus>('ready');
@@ -114,6 +120,83 @@ export default function VodafoneRunner() {
       setBest(saved);
       if (bestElRef.current) bestElRef.current.textContent = String(saved);
     } catch {}
+
+    // ── Audio ─────────────────────────────────────────────────────────────────
+
+    function getCtx(): AudioContext {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      return audioCtxRef.current;
+    }
+
+    function playJump() {
+      if (mutedRef.current) return;
+      const ctx = getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(620, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+      osc.start(); osc.stop(ctx.currentTime + 0.18);
+    }
+
+    function playCollect() {
+      if (mutedRef.current) return;
+      const ctx = getCtx();
+      [0, 0.08, 0.16].forEach((t, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = [520, 660, 880][i];
+        gain.gain.setValueAtTime(0.14, ctx.currentTime + t);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.12);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.12);
+      });
+    }
+
+    function playHit() {
+      if (mutedRef.current) return;
+      const ctx = getCtx();
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+      const src = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      src.buffer = buf; src.connect(gain); gain.connect(ctx.destination);
+      gain.gain.value = 0.22;
+      src.start();
+    }
+
+    function startBg() {
+      if (bgStartedRef.current) return;
+      bgStartedRef.current = true;
+      const ctx = getCtx();
+      const gain = ctx.createGain();
+      gain.gain.value = mutedRef.current ? 0 : 0.06;
+      gain.connect(ctx.destination);
+      bgGainRef.current = gain;
+
+      function makeLoop() {
+        const notes = [220, 246, 261, 293, 220, 196, 220, 246];
+        let t = ctx.currentTime;
+        notes.forEach(freq => {
+          const osc = ctx.createOscillator();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          osc.connect(gain);
+          osc.start(t); osc.stop(t + 0.38);
+          t += 0.4;
+        });
+        setTimeout(makeLoop, notes.length * 400);
+      }
+      makeLoop();
+    }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -236,6 +319,7 @@ export default function VodafoneRunner() {
     }
 
     function collectEffect() {
+      playCollect();
       const el = document.createElement('img') as HTMLImageElement;
       el.src = '/assets/wifi-good.svg';
       el.style.cssText = `position:absolute;left:${HB_LEFT}px;bottom:110px;width:48px;height:48px;object-fit:contain;pointer-events:none;z-index:9;animation:vfr-collect 0.55s ease forwards;filter:drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000);`;
@@ -252,6 +336,8 @@ export default function VodafoneRunner() {
         try { localStorage.setItem('vfr_best', String(newBest)); } catch {}
         if (bestElRef.current) bestElRef.current.textContent = String(newBest);
       }
+      playHit();
+      bgStartedRef.current = false;
       statusRef.current = 'over';
       setStatus('over');
       setScore(final);
@@ -470,6 +556,8 @@ export default function VodafoneRunner() {
         if (state.grounded) {
           state.vy = JUMP_V;
           state.grounded = false;
+          playJump();
+          startBg();
         }
       }
     }
@@ -668,9 +756,36 @@ export default function VodafoneRunner() {
           </div>
         </div>
 
-        {/* HUD — best */}
+        {/* HUD — best + ses */}
         <div style={{ position: 'absolute', right: 22, top: 18, zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
-          <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN İYİ</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN İYİ</span>
+            <button
+              onClick={() => {
+                const next = !mutedRef.current;
+                mutedRef.current = next;
+                setMuted(next);
+                if (bgGainRef.current) bgGainRef.current.gain.value = next ? 0 : 0.06;
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, lineHeight: 1 }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                {muted ? (
+                  <>
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#555"/>
+                    <line x1="23" y1="9" x2="17" y2="15" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                    <line x1="17" y1="9" x2="23" y2="15" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                  </>
+                ) : (
+                  <>
+                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#555"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+                  </>
+                )}
+              </svg>
+            </button>
+          </div>
           <span ref={bestElRef} style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, color: '#1a1a1a' }}>0</span>
         </div>
 
