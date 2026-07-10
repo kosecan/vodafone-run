@@ -779,8 +779,8 @@ export default function VodafoneRunner() {
             if (bgGainRef.current) bgGainRef.current.gain.value = next ? 0 : 0.06;
           }}
           style={{
-            position: 'absolute', left: '50%', top: 16, transform: 'translateX(-180px)',
-            zIndex: 8, background: 'rgba(0,0,0,0.15)', border: 'none', cursor: 'pointer',
+            position: 'absolute', right: 22, top: 52, zIndex: 8,
+            background: 'rgba(0,0,0,0.15)', border: 'none', cursor: 'pointer',
             padding: '5px 6px', borderRadius: 8, lineHeight: 1, display: 'flex', alignItems: 'center',
           }}
         >
@@ -788,8 +788,8 @@ export default function VodafoneRunner() {
             {muted ? (
               <>
                 <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
-                <line x1="23" y1="9" x2="17" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
-                <line x1="17" y1="9" x2="23" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="23" y1="9" x2="17" y2="15" stroke="#E60000" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="17" y1="9" x2="23" y2="15" stroke="#E60000" strokeWidth="2.5" strokeLinecap="round"/>
               </>
             ) : (
               <>
