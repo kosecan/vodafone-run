@@ -993,12 +993,24 @@ export default function VodafoneRunner() {
         })()}
 
         {/* Game over screen */}
-        {status === 'over' && (
+        {status === 'over' && (() => {
+          const board = getLeaderboard();
+          const userRank = getUserRank(score, board);
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score };
+          const fullBoard: LeaderboardEntry[] = [];
+          board.forEach(e => { if (e.rank < userRank) fullBoard.push(e); });
+          fullBoard.push(userEntry);
+          board.forEach(e => { if (e.rank >= userRank) fullBoard.push(e); });
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const start = Math.max(0, userIdx - 4);
+          const end = Math.min(fullBoard.length, userIdx + 5);
+          const visible = fullBoard.slice(start, end);
+          return (
           <div
             style={{
               position: 'absolute', inset: 0, zIndex: 9,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18,
-              background: 'rgba(10,12,18,.62)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14,
+              background: 'rgba(10,12,18,.72)',
               backdropFilter: 'blur(2px)',
               animation: 'vfr-pop .25s ease both',
             }}
@@ -1006,14 +1018,39 @@ export default function VodafoneRunner() {
             <h1 style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 32, color: '#E60000', textShadow: '0 4px 0 rgba(0,0,0,.5)' }}>
               OYUN BİTTİ
             </h1>
-            <div style={{ display: 'flex', gap: 40, alignItems: 'flex-end' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#ff8a8a' }}>SKOR</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 30, color: '#fff' }}>{score}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#ff8a8a' }}>SKOR</span>
+              <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 30, color: '#fff' }}>{score}</span>
+            </div>
+
+            {/* Liderlik tablosu */}
+            <div style={{ width: 300, background: 'rgba(255,255,255,0.07)', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
+              <div style={{ background: '#E60000', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 14 }}>🏆</span>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#9fd0ff' }}>EN İYİ</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 30, color: '#fff' }}>{best}</span>
+              <div style={{ padding: '4px 0' }}>
+                {visible.map((entry) => {
+                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  return (
+                    <div key={entry.rank} style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '6px 14px',
+                      background: isUser ? 'rgba(230,0,0,0.25)' : 'transparent',
+                      borderLeft: isUser ? '3px solid #E60000' : '3px solid transparent',
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 8, color: isUser ? '#ff8a8a' : '#888', minWidth: 24 }}>
+                        #{entry.rank}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: isUser ? 700 : 500, fontSize: 12, color: isUser ? '#ffb3b3' : '#ddd', flex: 1 }}>
+                        {isUser ? entry.name : maskName(entry.name)}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: isUser ? '#ffb3b3' : '#aaa' }}>
+                        {entry.score}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <div
@@ -1030,7 +1067,8 @@ export default function VodafoneRunner() {
               </span>
             </div>
           </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Portrait rotate prompt (mobile) */}
