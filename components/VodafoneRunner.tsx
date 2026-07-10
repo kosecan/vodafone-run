@@ -276,7 +276,12 @@ export default function VodafoneRunner() {
         });
         bgLoopTimeout = setTimeout(makeLoop, notes.length * 400);
       }
-      makeLoop();
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(makeLoop);
+      } else {
+        makeLoop();
+      }
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
