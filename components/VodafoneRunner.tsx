@@ -970,7 +970,7 @@ export default function VodafoneRunner() {
         </button>
 
         {/* HUD — kalp / kalkan */}
-        <div style={{ position: 'absolute', left: '50%', top: 16, transform: 'translateX(-50%)', zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+        <div style={{ position: 'absolute', left: '50%', top: 16, transform: 'translateX(-50%)', zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {[0, 1, 2].map(i => {
               const filled = hasShield || i < modemCount;
@@ -990,7 +990,7 @@ export default function VodafoneRunner() {
             })}
           </div>
           {hasShield && (
-            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#E60000', letterSpacing: 1, animation: 'vfr-blink 1s steps(1) infinite' }}>
+            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, color: '#E60000', letterSpacing: 1, animation: 'vfr-blink 1s steps(1) infinite' }}>
               KALKAN AKTİF
             </span>
           )}
