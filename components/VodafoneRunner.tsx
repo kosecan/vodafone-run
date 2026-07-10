@@ -995,8 +995,8 @@ export default function VodafoneRunner() {
         {/* Game over screen */}
         {status === 'over' && (() => {
           const board = getLeaderboard();
-          const userRank = getUserRank(score, board);
-          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score };
+          const userRank = getUserRank(best, board);
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
           const fullBoard: LeaderboardEntry[] = [];
           board.forEach(e => { if (e.rank < userRank) fullBoard.push(e); });
           fullBoard.push(userEntry);
