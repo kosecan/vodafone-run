@@ -160,6 +160,36 @@ export default function VodafoneRunner() {
       });
     }
 
+    function playShieldOn() {
+      if (mutedRef.current) return;
+      const ctx = getCtx();
+      [0, 0.1, 0.2, 0.32].forEach((t, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = [440, 554, 659, 880][i];
+        gain.gain.setValueAtTime(0.16, ctx.currentTime + t);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.15);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.15);
+      });
+    }
+
+    function playShieldBreak() {
+      if (mutedRef.current) return;
+      const ctx = getCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.4);
+      gain.gain.setValueAtTime(0.22, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4);
+    }
+
     function playHit() {
       if (mutedRef.current) return;
       const ctx = getCtx();
@@ -432,6 +462,7 @@ export default function VodafoneRunner() {
                 state.modemCount = 0;
                 state.spawnedInInterval = 0;
                 state.collectibleSpawnDist = 1200 + Math.random() * 800;
+                playShieldBreak();
                 setHasShield(false);
                 setModemCount(0);
                 // flash effect
@@ -468,6 +499,7 @@ export default function VodafoneRunner() {
                 state.modemCount = 0;
                 state.hasShield = true;
                 setHasShield(true);
+                playShieldOn();
               }
               setModemCount(state.modemCount);
               continue;
