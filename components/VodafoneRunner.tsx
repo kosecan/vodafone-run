@@ -263,18 +263,91 @@ export default function VodafoneRunner() {
 
       function makeLoop() {
         if (!bgStartedRef.current) return;
-        const gain = bgGainRef.current!;
-        const notes = [220, 246, 261, 293, 220, 196, 220, 246];
-        let t = ctx.currentTime;
-        notes.forEach(freq => {
+        const master = bgGainRef.current!;
+        const BPM = 160;
+        const beat = 60 / BPM;
+        const bar = beat * 4;      // 4 beats = 1 bar
+        const bars = 2;            // loop every 2 bars
+        const t0 = ctx.currentTime + 0.01;
+
+        // ── helper: schedule one note ──────────────────────────────────────
+        function note(freq: number, start: number, dur: number, type: OscillatorType, vol: number) {
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0, start);
+          g.gain.linearRampToValueAtTime(vol, start + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+          g.connect(master);
           const osc = ctx.createOscillator();
-          osc.type = 'triangle';
+          osc.type = type;
           osc.frequency.value = freq;
-          osc.connect(gain);
-          osc.start(t); osc.stop(t + 0.38);
-          t += 0.4;
+          osc.connect(g);
+          osc.start(start);
+          osc.stop(start + dur + 0.05);
+        }
+
+        // ── helper: kick drum (sine thump) ────────────────────────────────
+        function kick(start: number) {
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(1.2, start);
+          g.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+          g.connect(master);
+          const osc = ctx.createOscillator();
+          osc.frequency.setValueAtTime(160, start);
+          osc.frequency.exponentialRampToValueAtTime(40, start + 0.25);
+          osc.connect(g);
+          osc.start(start); osc.stop(start + 0.4);
+        }
+
+        // ── helper: hi-hat (noise burst) ──────────────────────────────────
+        function hat(start: number, vol = 0.18) {
+          const bufSize = ctx.sampleRate * 0.05;
+          const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          const filt = ctx.createBiquadFilter();
+          filt.type = 'highpass'; filt.frequency.value = 8000;
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(vol, start);
+          g.gain.exponentialRampToValueAtTime(0.001, start + 0.06);
+          src.connect(filt); filt.connect(g); g.connect(master);
+          src.start(start); src.stop(start + 0.08);
+        }
+
+        // ── melody (A minor pentatonic) ───────────────────────────────────
+        // A3=220 C4=261 D4=293 E4=329 G4=392 A4=440 C5=523 E5=659
+        const mel = [440,440,523,392, 440,329,293,329, 440,440,523,659, 523,440,392,440];
+        const melDur = beat * 0.45;
+        mel.forEach((freq, i) => {
+          const t = t0 + i * (bar * bars / mel.length);
+          note(freq, t, melDur, 'square', 0.18);
         });
-        bgLoopTimeout = setTimeout(makeLoop, notes.length * 400);
+
+        // ── bass line (root + fifth pattern) ──────────────────────────────
+        const bass = [110,110,0,110, 98,98,0,110]; // A2=110 G2=98; 0=rest
+        bass.forEach((freq, i) => {
+          if (!freq) return;
+          const t = t0 + i * beat * (bars / bass.length) * 4;
+          note(freq, t, beat * 0.8, 'sawtooth', 0.22);
+        });
+
+        // ── arp (16th notes, high octave) ─────────────────────────────────
+        const arp = [880,1046,880,784, 880,659,784,880];
+        arp.forEach((freq, i) => {
+          const t = t0 + i * (beat / 2);
+          note(freq, t, beat * 0.22, 'triangle', 0.06);
+        });
+
+        // ── drums (kick + hat) ────────────────────────────────────────────
+        for (let b = 0; b < bars * 4; b++) {
+          const t = t0 + b * beat;
+          if (b % 4 === 0 || b % 4 === 2) kick(t);          // kick on 1 & 3
+          hat(t);                                              // hat every beat
+          hat(t + beat / 2, 0.10);                            // off-beat hat
+        }
+
+        bgLoopTimeout = setTimeout(makeLoop, bars * bar * 1000 - 30);
       }
 
       if (ctx.state === 'suspended') {
