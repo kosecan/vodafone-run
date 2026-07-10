@@ -852,7 +852,7 @@ export default function VodafoneRunner() {
             })}
           </div>
           {hasShield && (
-            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 7, color: '#E60000', letterSpacing: 1, animation: 'vfr-blink 1s steps(1) infinite' }}>
+            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#E60000', letterSpacing: 1, animation: 'vfr-blink 1s steps(1) infinite' }}>
               KALKAN AKTİF
             </span>
           )}
