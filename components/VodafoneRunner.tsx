@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useRef, useState } from 'react';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type GameStatus = 'ready' | 'playing' | 'over';
 
@@ -18,7 +18,7 @@ interface Collectible {
   x: number;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const FRAMES = [
   '/assets/run0.png',
@@ -36,7 +36,7 @@ const HB_W = 58;
 const GRAVITY = 3150;
 const JUMP_V = 1100;
 
-// ─── Leaderboard ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Leaderboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface LeaderboardEntry {
   rank: number;
@@ -50,39 +50,39 @@ function maskName(name: string): string {
   ).join(' ');
 }
 
-// Burası ileride API çağrısına dönüştürülecek
+// BurasÄ± ileride API Ã§aÄŸrÄ±sÄ±na dÃ¶nÃ¼ÅŸtÃ¼rÃ¼lecek
 function getLeaderboard(): LeaderboardEntry[] {
   return [
-    { rank: 1,  name: 'Mehmet Yılmaz',   score: 4820 },
-    { rank: 2,  name: 'Ayşe Kara',       score: 4210 },
+    { rank: 1,  name: 'Mehmet YÄ±lmaz',   score: 4820 },
+    { rank: 2,  name: 'AyÅŸe Kara',       score: 4210 },
     { rank: 3,  name: 'Burak Demir',     score: 3980 },
-    { rank: 4,  name: 'Zeynep Aktaş',    score: 3750 },
-    { rank: 5,  name: 'Emre Şahin',      score: 3540 },
-    { rank: 6,  name: 'Fatma Çelik',     score: 3310 },
-    { rank: 7,  name: 'Oğuzhan Kurt',    score: 3100 },
+    { rank: 4,  name: 'Zeynep AktaÅŸ',    score: 3750 },
+    { rank: 5,  name: 'Emre Åahin',      score: 3540 },
+    { rank: 6,  name: 'Fatma Ã‡elik',     score: 3310 },
+    { rank: 7,  name: 'OÄŸuzhan Kurt',    score: 3100 },
     { rank: 8,  name: 'Selin Arslan',    score: 2980 },
-    { rank: 9,  name: 'Kemal Doğan',     score: 2760 },
-    { rank: 10, name: 'Deniz Aydın',     score: 2590 },
+    { rank: 9,  name: 'Kemal DoÄŸan',     score: 2760 },
+    { rank: 10, name: 'Deniz AydÄ±n',     score: 2590 },
     { rank: 11, name: 'Hakan Bulut',     score: 2430 },
-    { rank: 12, name: 'Merve Güneş',     score: 2280 },
-    { rank: 13, name: 'Tarık Özdemir',   score: 2110 },
-    { rank: 14, name: 'Ceren Yıldız',    score: 1970 },
-    { rank: 15, name: 'Serkan Koç',      score: 1840 },
+    { rank: 12, name: 'Merve GÃ¼neÅŸ',     score: 2280 },
+    { rank: 13, name: 'TarÄ±k Ã–zdemir',   score: 2110 },
+    { rank: 14, name: 'Ceren YÄ±ldÄ±z',    score: 1970 },
+    { rank: 15, name: 'Serkan KoÃ§',      score: 1840 },
     { rank: 16, name: 'Elif Polat',      score: 1720 },
-    { rank: 17, name: 'Murat Erdoğan',   score: 1610 },
+    { rank: 17, name: 'Murat ErdoÄŸan',   score: 1610 },
     { rank: 18, name: 'Gizem Turan',     score: 1500 },
     { rank: 19, name: 'Alp Aslan',       score: 1390 },
     { rank: 20, name: 'Neslihan Acar',   score: 1290 },
   ];
 }
 
-// Kullanıcının sırasını best score'a göre hesapla — ileride API'dan gelecek
+// KullanÄ±cÄ±nÄ±n sÄ±rasÄ±nÄ± best score'a gÃ¶re hesapla â€” ileride API'dan gelecek
 function getUserRank(best: number, board: LeaderboardEntry[]): number {
   const lower = board.filter(e => e.score > best).length;
   return lower + 1;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function VodafoneRunner() {
   const [status, setStatus] = useState<GameStatus>('ready');
@@ -97,7 +97,7 @@ export default function VodafoneRunner() {
   const bgGainRef = useRef<GainNode | null>(null);
   const bgStartedRef = useRef(false);
 
-  // Mirror refs — game loop reads these instead of stale state
+  // Mirror refs â€” game loop reads these instead of stale state
   const statusRef = useRef<GameStatus>('ready');
   const bestRef = useRef(0);
 
@@ -118,7 +118,7 @@ export default function VodafoneRunner() {
   const rotateRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef(0);
 
-  // Mutable game state — written every frame, no re-renders
+  // Mutable game state â€” written every frame, no re-renders
   const g = useRef({
     speed: 360,
     dist: 0,
@@ -167,7 +167,7 @@ export default function VodafoneRunner() {
       if (bestElRef.current) bestElRef.current.textContent = String(saved);
     } catch {}
 
-    // ── Audio ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Audio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function getCtx(): AudioContext {
       if (!audioCtxRef.current) {
@@ -181,7 +181,7 @@ export default function VodafoneRunner() {
       const ctx = getCtx();
       const t = ctx.currentTime;
 
-      // Katman 1: hızlı "boing" — frekans aşağı düşer (arcade spring hissi)
+      // Katman 1: hÄ±zlÄ± "boing" â€” frekans aÅŸaÄŸÄ± dÃ¼ÅŸer (arcade spring hissi)
       const osc1 = ctx.createOscillator();
       const g1 = ctx.createGain();
       osc1.connect(g1); g1.connect(ctx.destination);
@@ -192,7 +192,7 @@ export default function VodafoneRunner() {
       g1.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
       osc1.start(t); osc1.stop(t + 0.18);
 
-      // Katman 2: hafif "click" başlangıç vuruşu
+      // Katman 2: hafif "click" baÅŸlangÄ±Ã§ vuruÅŸu
       const osc2 = ctx.createOscillator();
       const g2 = ctx.createGain();
       osc2.connect(g2); g2.connect(ctx.destination);
@@ -284,7 +284,7 @@ export default function VodafoneRunner() {
         const bars = 2;            // loop every 2 bars
         const t0 = ctx.currentTime + 0.01;
 
-        // ── helper: schedule one note ──────────────────────────────────────
+        // â”€â”€ helper: schedule one note â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function note(freq: number, start: number, dur: number, type: OscillatorType, vol: number) {
           const g = ctx.createGain();
           g.gain.setValueAtTime(0, start);
@@ -299,7 +299,7 @@ export default function VodafoneRunner() {
           osc.stop(start + dur + 0.05);
         }
 
-        // ── helper: kick drum (sine thump) ────────────────────────────────
+        // â”€â”€ helper: kick drum (sine thump) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function kick(start: number) {
           const g = ctx.createGain();
           g.gain.setValueAtTime(1.2, start);
@@ -312,7 +312,7 @@ export default function VodafoneRunner() {
           osc.start(start); osc.stop(start + 0.4);
         }
 
-        // ── helper: hi-hat (noise burst) ──────────────────────────────────
+        // â”€â”€ helper: hi-hat (noise burst) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function hat(start: number, vol = 0.18) {
           const bufSize = ctx.sampleRate * 0.05;
           const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -329,7 +329,7 @@ export default function VodafoneRunner() {
           src.start(start); src.stop(start + 0.08);
         }
 
-        // ── melody (A minor pentatonic) ───────────────────────────────────
+        // â”€â”€ melody (A minor pentatonic) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // A3=220 C4=261 D4=293 E4=329 G4=392 A4=440 C5=523 E5=659
         const mel = [440,440,523,392, 440,329,293,329, 440,440,523,659, 523,440,392,440];
         const melDur = beat * 0.45;
@@ -338,7 +338,7 @@ export default function VodafoneRunner() {
           note(freq, t, melDur, 'square', 0.18);
         });
 
-        // ── bass line (root + fifth pattern) ──────────────────────────────
+        // â”€â”€ bass line (root + fifth pattern) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const bass = [110,110,0,110, 98,98,0,110]; // A2=110 G2=98; 0=rest
         bass.forEach((freq, i) => {
           if (!freq) return;
@@ -346,14 +346,14 @@ export default function VodafoneRunner() {
           note(freq, t, beat * 0.8, 'sawtooth', 0.22);
         });
 
-        // ── arp (16th notes, high octave) ─────────────────────────────────
+        // â”€â”€ arp (16th notes, high octave) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const arp = [880,1046,880,784, 880,659,784,880];
         arp.forEach((freq, i) => {
           const t = t0 + i * (beat / 2);
           note(freq, t, beat * 0.22, 'triangle', 0.06);
         });
 
-        // ── drums (kick + hat) ────────────────────────────────────────────
+        // â”€â”€ drums (kick + hat) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         for (let b = 0; b < bars * 4; b++) {
           const t = t0 + b * beat;
           if (b % 4 === 0 || b % 4 === 2) kick(t);          // kick on 1 & 3
@@ -371,7 +371,7 @@ export default function VodafoneRunner() {
       }
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function fit() {
       const vw = window.innerWidth;
@@ -518,7 +518,7 @@ export default function VodafoneRunner() {
       setBest(newBest);
     }
 
-    // ── Game loop ─────────────────────────────────────────────────────────────
+    // â”€â”€ Game loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function loop(now: number) {
       const state = g.current;
@@ -550,15 +550,15 @@ export default function VodafoneRunner() {
           state.spawnDist -= state.speed * dt;
           if (state.spawnDist <= 0) {
             spawn();
-            // Zorluk mesafeye bağlı — hız kapına ulaşılsa bile gap daralmaya devam eder
+            // Zorluk mesafeye baÄŸlÄ± â€” hÄ±z kapÄ±na ulaÅŸÄ±lsa bile gap daralmaya devam eder
             const difficulty = Math.min(1, state.dist / 40000); // ~40k px'de zirve
-            const reactionTime = 1.05 - 0.45 * difficulty;     // 1.05s → 0.60s
+            const reactionTime = 1.05 - 0.45 * difficulty;     // 1.05s â†’ 0.60s
             const minGap = state.speed * reactionTime;
-            const maxGap = state.speed * (2.00 - 1.15 * difficulty); // 2.00 → 0.85
+            const maxGap = state.speed * (2.00 - 1.15 * difficulty); // 2.00 â†’ 0.85
             state.spawnDist = minGap + Math.random() * (maxGap - minGap);
           }
 
-          // Yeni 500'lük dilime geçince sayacı sıfırla
+          // Yeni 500'lÃ¼k dilime geÃ§ince sayacÄ± sÄ±fÄ±rla
           const currentInterval = Math.floor(state.scoreF / 500);
           if (currentInterval > state.lastInterval) {
             state.lastInterval = currentInterval;
@@ -566,14 +566,14 @@ export default function VodafoneRunner() {
             state.collectibleSpawnDist = 400;
           }
 
-          // Spawn collectibles — her 500 puanlık dilimde max 3 tane
+          // Spawn collectibles â€” her 500 puanlÄ±k dilimde max 3 tane
           state.collectibleSpawnDist -= state.speed * dt;
           if (state.collectibleSpawnDist <= 0) {
             if (!state.hasShield && state.spawnedInInterval < 3) {
               spawnCollectible();
               state.spawnedInInterval += 1;
             }
-            // 3 spawn olduysa bir sonraki dilime kadar bekleme süresi önemli değil
+            // 3 spawn olduysa bir sonraki dilime kadar bekleme sÃ¼resi Ã¶nemli deÄŸil
             state.collectibleSpawnDist = 500 + Math.random() * 400;
           }
 
@@ -646,7 +646,7 @@ export default function VodafoneRunner() {
             }
           }
 
-          // Score HUD (direct DOM for performance — avoids React re-render every frame)
+          // Score HUD (direct DOM for performance â€” avoids React re-render every frame)
           if (scoreElRef.current) {
             scoreElRef.current.textContent = String(Math.floor(state.scoreF));
           }
@@ -717,7 +717,7 @@ export default function VodafoneRunner() {
       rafRef.current = requestAnimationFrame(loop);
     }
 
-    // ── Input handler ─────────────────────────────────────────────────────────
+    // â”€â”€ Input handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function input() {
       const st = statusRef.current;
@@ -738,7 +738,7 @@ export default function VodafoneRunner() {
       }
     }
 
-    // ── Event listeners ───────────────────────────────────────────────────────
+    // â”€â”€ Event listeners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const onResize = () => fit();
     const onKey = (e: KeyboardEvent) => {
@@ -772,11 +772,11 @@ export default function VodafoneRunner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: 'linear-gradient(180deg, #bfe8ff 0%, #dff4ff 45%, #ffe9e6 100%)' }}>
-      {/* ── Stage ──────────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Stage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div
         ref={stageRef}
         style={{
@@ -801,7 +801,7 @@ export default function VodafoneRunner() {
           }}
         />
 
-        {/* Clouds — each tracked independently, wraps off left edge → re-enters from right */}
+        {/* Clouds â€” each tracked independently, wraps off left edge â†’ re-enters from right */}
         {[
           { top: 48,  h: 90, op: 0.95 },
           { top: 112, h: 62, op: 0.80 },
@@ -921,7 +921,7 @@ export default function VodafoneRunner() {
           }}
         />
 
-        {/* HUD — score */}
+        {/* HUD â€” score */}
         <div style={{ position: 'absolute', left: 22, top: 18, zIndex: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -932,13 +932,13 @@ export default function VodafoneRunner() {
           </div>
         </div>
 
-        {/* HUD — best */}
+        {/* HUD â€” best */}
         <div style={{ position: 'absolute', right: 22, top: 18, zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
-          <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN İYİ</span>
+          <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN Ä°YÄ°</span>
           <span ref={bestElRef} style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, color: '#1a1a1a' }}>0</span>
         </div>
 
-        {/* HUD — ses ikonu */}
+        {/* HUD â€” ses ikonu */}
         <button
           onClick={() => {
             const next = !mutedRef.current;
@@ -969,7 +969,7 @@ export default function VodafoneRunner() {
           </svg>
         </button>
 
-        {/* HUD — kalp / kalkan */}
+        {/* HUD â€” kalp / kalkan */}
         <div style={{ position: 'absolute', left: '50%', top: 16, transform: 'translateX(-50%)', zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {[0, 1, 2].map(i => {
@@ -991,7 +991,7 @@ export default function VodafoneRunner() {
           </div>
           {hasShield && (
             <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, color: '#E60000', letterSpacing: 1, animation: 'vfr-blink 1s steps(1) infinite' }}>
-              KALKAN AKTİF
+              KALKAN AKTÄ°F
             </span>
           )}
         </div>
@@ -1000,7 +1000,7 @@ export default function VodafoneRunner() {
         {status === 'ready' && (() => {
           const board = getLeaderboard();
           const userRank = getUserRank(best, board);
-          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALAMANIZ', score: best };
           const fullBoard: LeaderboardEntry[] = [];
           board.forEach(e => {
             if (e.rank < userRank) fullBoard.push(e);
@@ -1009,7 +1009,7 @@ export default function VodafoneRunner() {
           board.forEach(e => {
             if (e.rank >= userRank) fullBoard.push(e);
           });
-          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALAMANIZ');
           const start = Math.max(0, userIdx - 5);
           const end = Math.min(fullBoard.length, userIdx + 6);
           const visible = fullBoard.slice(start, end);
@@ -1024,7 +1024,7 @@ export default function VodafoneRunner() {
               padding: '0 32px',
             }}
           >
-            {/* Sol: logo + başlık + buton */}
+            {/* Sol: logo + baÅŸlÄ±k + buton */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, animation: 'vfr-bob 2.4s ease-in-out infinite' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1034,26 +1034,26 @@ export default function VodafoneRunner() {
                 </h1>
               </div>
               <p style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: 19, color: '#2a2f38', textAlign: 'center' }}>
-                Engellerden zıpla, WiFi topla, mümkün olduğunca koş!
+                Engellerden zÄ±pla, WiFi topla, mÃ¼mkÃ¼n olduÄŸunca koÅŸ!
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 24px', borderRadius: 999, background: '#E60000', boxShadow: '0 8px 0 #9c0000, 0 14px 26px rgba(230,0,0,.4)', animation: 'vfr-blink 1.3s steps(1) infinite' }}>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#fff' }}>BAŞLAMAK İÇİN DOKUN</span>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#fff' }}>BAÅLAMAK Ä°Ã‡Ä°N DOKUN</span>
               </div>
             </div>
 
-            {/* Sağ: liderlik tablosu */}
+            {/* SaÄŸ: liderlik tablosu */}
             <div style={{
               width: 280, background: 'rgba(255,255,255,0.82)', borderRadius: 16,
               boxShadow: '0 8px 32px rgba(0,0,0,0.13)', overflow: 'hidden',
               border: '2px solid rgba(230,0,0,0.15)',
             }}>
               <div style={{ background: '#E60000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 16 }}>🏆</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
+                <span style={{ fontSize: 16 }}>ğŸ†</span>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#fff', letterSpacing: 1 }}>LÄ°DERLÄ°K</span>
               </div>
               <div style={{ padding: '6px 0' }}>
                 {visible.map((entry) => {
-                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  const isUser = entry.name === 'SİZİN SIRALAMANIZ';
                   return (
                     <div key={entry.rank} style={{
                       display: 'flex', alignItems: 'center', gap: 10,
@@ -1083,12 +1083,12 @@ export default function VodafoneRunner() {
         {status === 'over' && (() => {
           const board = getLeaderboard();
           const userRank = getUserRank(best, board);
-          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALAMANIZ', score: best };
           const fullBoard: LeaderboardEntry[] = [];
           board.forEach(e => { if (e.rank < userRank) fullBoard.push(e); });
           fullBoard.push(userEntry);
           board.forEach(e => { if (e.rank >= userRank) fullBoard.push(e); });
-          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALAMANIZ');
           const start = Math.max(0, userIdx - 4);
           const end = Math.min(fullBoard.length, userIdx + 5);
           const visible = fullBoard.slice(start, end);
@@ -1103,7 +1103,7 @@ export default function VodafoneRunner() {
             }}
           >
             <h1 style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 32, color: '#E60000', textShadow: '0 4px 0 rgba(0,0,0,.5)' }}>
-              OYUN BİTTİ
+              OYUN BÄ°TTÄ°
             </h1>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
               <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#ff8a8a' }}>SKOR</span>
@@ -1113,12 +1113,12 @@ export default function VodafoneRunner() {
             {/* Liderlik tablosu */}
             <div style={{ width: 300, background: '#fff', borderRadius: 14, overflow: 'hidden', border: '2px solid rgba(230,0,0,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.13)' }}>
               <div style={{ background: '#E60000', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 14 }}>🏆</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
+                <span style={{ fontSize: 14 }}>ğŸ†</span>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: '#fff', letterSpacing: 1 }}>LÄ°DERLÄ°K</span>
               </div>
               <div style={{ padding: '4px 0' }}>
                 {visible.map((entry) => {
-                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  const isUser = entry.name === 'SİZİN SIRALAMANIZ';
                   return (
                     <div key={entry.rank} style={{
                       display: 'flex', alignItems: 'center', gap: 10,
@@ -1150,7 +1150,7 @@ export default function VodafoneRunner() {
               }}
             >
               <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#fff' }}>
-                TEKRAR OYNA ↺
+                TEKRAR OYNA â†º
               </span>
             </div>
           </div>
@@ -1182,14 +1182,14 @@ export default function VodafoneRunner() {
             animation: 'vfr-rot 2.2s ease-in-out infinite',
           }}
         >
-          {/* Dynamic Island çentiği */}
+          {/* Dynamic Island Ã§entiÄŸi */}
           <div style={{
             position: 'absolute', top: 7, left: '50%',
             transform: 'translateX(-50%)',
             width: 20, height: 6,
             background: '#fff', borderRadius: 4,
           }} />
-          {/* Ev çubuğu */}
+          {/* Ev Ã§ubuÄŸu */}
           <div style={{
             position: 'absolute', bottom: 7, left: '50%',
             transform: 'translateX(-50%)',
@@ -1198,12 +1198,13 @@ export default function VodafoneRunner() {
           }} />
         </div>
         <p style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, lineHeight: 1.7, color: '#E60000' }}>
-          TELEFONU<br />YAN ÇEVİR
+          TELEFONU<br />YAN Ã‡EVÄ°R
         </p>
         <p style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: 16, color: '#cdd3dd' }}>
-          Oynamak için telefonu yan çevirin
+          Oynamak iÃ§in telefonu yan Ã§evirin
         </p>
       </div>
     </div>
   );
 }
+
