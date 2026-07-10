@@ -36,6 +36,52 @@ const HB_W = 58;
 const GRAVITY = 3150;
 const JUMP_V = 1100;
 
+// ─── Leaderboard ──────────────────────────────────────────────────────────────
+
+interface LeaderboardEntry {
+  rank: number;
+  name: string;
+  score: number;
+}
+
+function maskName(name: string): string {
+  return name.split(' ').map(part =>
+    part.length <= 1 ? part : part[0] + '*'.repeat(part.length - 1)
+  ).join(' ');
+}
+
+// Burası ileride API çağrısına dönüştürülecek
+function getLeaderboard(): LeaderboardEntry[] {
+  return [
+    { rank: 1,  name: 'Mehmet Yılmaz',   score: 4820 },
+    { rank: 2,  name: 'Ayşe Kara',       score: 4210 },
+    { rank: 3,  name: 'Burak Demir',     score: 3980 },
+    { rank: 4,  name: 'Zeynep Aktaş',    score: 3750 },
+    { rank: 5,  name: 'Emre Şahin',      score: 3540 },
+    { rank: 6,  name: 'Fatma Çelik',     score: 3310 },
+    { rank: 7,  name: 'Oğuzhan Kurt',    score: 3100 },
+    { rank: 8,  name: 'Selin Arslan',    score: 2980 },
+    { rank: 9,  name: 'Kemal Doğan',     score: 2760 },
+    { rank: 10, name: 'Deniz Aydın',     score: 2590 },
+    { rank: 11, name: 'Hakan Bulut',     score: 2430 },
+    { rank: 12, name: 'Merve Güneş',     score: 2280 },
+    { rank: 13, name: 'Tarık Özdemir',   score: 2110 },
+    { rank: 14, name: 'Ceren Yıldız',    score: 1970 },
+    { rank: 15, name: 'Serkan Koç',      score: 1840 },
+    { rank: 16, name: 'Elif Polat',      score: 1720 },
+    { rank: 17, name: 'Murat Erdoğan',   score: 1610 },
+    { rank: 18, name: 'Gizem Turan',     score: 1500 },
+    { rank: 19, name: 'Alp Aslan',       score: 1390 },
+    { rank: 20, name: 'Neslihan Acar',   score: 1290 },
+  ];
+}
+
+// Kullanıcının sırasını best score'a göre hesapla — ileride API'dan gelecek
+function getUserRank(best: number, board: LeaderboardEntry[]): number {
+  const lower = board.filter(e => e.score > best).length;
+  return lower + 1;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function VodafoneRunner() {
@@ -859,49 +905,87 @@ export default function VodafoneRunner() {
         </div>
 
         {/* Ready screen */}
-        {status === 'ready' && (
+        {status === 'ready' && (() => {
+          const board = getLeaderboard();
+          const userRank = getUserRank(best, board);
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
+          const fullBoard: LeaderboardEntry[] = [];
+          board.forEach(e => {
+            if (e.rank < userRank) fullBoard.push(e);
+          });
+          fullBoard.push(userEntry);
+          board.forEach(e => {
+            if (e.rank >= userRank) fullBoard.push(e);
+          });
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const start = Math.max(0, userIdx - 5);
+          const end = Math.min(fullBoard.length, userIdx + 6);
+          const visible = fullBoard.slice(start, end);
+
+          return (
           <div
             style={{
               position: 'absolute', inset: 0, zIndex: 9,
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 22,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 40,
               background: 'rgba(255,255,255,.18)',
               backdropFilter: 'blur(1px)',
+              padding: '0 32px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, animation: 'vfr-bob 2.4s ease-in-out infinite' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/assets/logo.png" alt="Vodafone" style={{ width: 64, height: 64, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,.3))' }} />
-              <h1
-                style={{
-                  fontFamily: 'var(--font-press-start), monospace',
-                  fontSize: 34, lineHeight: 1.2,
-                  color: '#E60000',
-                  textShadow: '0 4px 0 rgba(0,0,0,.18)',
-                }}
-              >
-                VODAFONE<br />
-                <span style={{ color: '#1a1a1a' }}>RUN</span>
-              </h1>
+            {/* Sol: logo + başlık + buton */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, animation: 'vfr-bob 2.4s ease-in-out infinite' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/assets/logo.png" alt="Vodafone" style={{ width: 64, height: 64, filter: 'drop-shadow(0 4px 8px rgba(0,0,0,.3))' }} />
+                <h1 style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 34, lineHeight: 1.2, color: '#E60000', textShadow: '0 4px 0 rgba(0,0,0,.18)' }}>
+                  VODAFONE<br /><span style={{ color: '#1a1a1a' }}>RUN</span>
+                </h1>
+              </div>
+              <p style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: 19, color: '#2a2f38', textAlign: 'center' }}>
+                Engellerden zıpla, WiFi topla, mümkün olduğunca koş!
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '13px 24px', borderRadius: 999, background: '#E60000', boxShadow: '0 8px 0 #9c0000, 0 14px 26px rgba(230,0,0,.4)', animation: 'vfr-blink 1.3s steps(1) infinite' }}>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#fff' }}>BAŞLAMAK İÇİN DOKUN</span>
+              </div>
             </div>
-            <p style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 600, fontSize: 19, color: '#2a2f38' }}>
-              Engellerden zıpla, WiFi topla, mümkün olduğunca koş!
-            </p>
-            <div
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '13px 24px', borderRadius: 999,
-                background: '#E60000',
-                boxShadow: '0 8px 0 #9c0000, 0 14px 26px rgba(230,0,0,.4)',
-                animation: 'vfr-blink 1.3s steps(1) infinite',
-              }}
-            >
-              <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 11, color: '#fff' }}>
-                BAŞLAMAK İÇİN DOKUN
-              </span>
+
+            {/* Sağ: liderlik tablosu */}
+            <div style={{
+              width: 280, background: 'rgba(255,255,255,0.82)', borderRadius: 16,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.13)', overflow: 'hidden',
+              border: '2px solid rgba(230,0,0,0.15)',
+            }}>
+              <div style={{ background: '#E60000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 16 }}>🏆</span>
+                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
+              </div>
+              <div style={{ padding: '6px 0' }}>
+                {visible.map((entry) => {
+                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  return (
+                    <div key={entry.rank} style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '7px 14px',
+                      background: isUser ? 'rgba(230,0,0,0.10)' : 'transparent',
+                      borderLeft: isUser ? '3px solid #E60000' : '3px solid transparent',
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: isUser ? '#E60000' : '#888', minWidth: 24 }}>
+                        #{entry.rank}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: isUser ? 700 : 500, fontSize: 13, color: isUser ? '#E60000' : '#1a1a1a', flex: 1 }}>
+                        {isUser ? entry.name : maskName(entry.name)}
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: isUser ? '#E60000' : '#333' }}>
+                        {entry.score}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* Game over screen */}
         {status === 'over' && (
