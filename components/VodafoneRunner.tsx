@@ -764,41 +764,42 @@ export default function VodafoneRunner() {
           </div>
         </div>
 
-        {/* HUD — best + ses */}
+        {/* HUD — best */}
         <div style={{ position: 'absolute', right: 22, top: 18, zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN İYİ</span>
-            <button
-              onClick={() => {
-                const next = !mutedRef.current;
-                mutedRef.current = next;
-                setMuted(next);
-                if (bgGainRef.current) bgGainRef.current.gain.value = next ? 0 : 0.06;
-              }}
-              style={{
-                background: 'rgba(0,0,0,0.15)', border: 'none', cursor: 'pointer',
-                padding: '5px 6px', borderRadius: 8, lineHeight: 1, display: 'flex', alignItems: 'center',
-              }}
-            >
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                {muted ? (
-                  <>
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
-                    <line x1="23" y1="9" x2="17" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
-                    <line x1="17" y1="9" x2="23" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
-                  </>
-                ) : (
-                  <>
-                    <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
-                  </>
-                )}
-              </svg>
-            </button>
-          </div>
+          <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, letterSpacing: 1, color: '#555' }}>EN İYİ</span>
           <span ref={bestElRef} style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 14, color: '#1a1a1a' }}>0</span>
         </div>
+
+        {/* HUD — ses ikonu */}
+        <button
+          onClick={() => {
+            const next = !mutedRef.current;
+            mutedRef.current = next;
+            setMuted(next);
+            if (bgGainRef.current) bgGainRef.current.gain.value = next ? 0 : 0.06;
+          }}
+          style={{
+            position: 'absolute', left: '50%', top: 16, transform: 'translateX(-180px)',
+            zIndex: 8, background: 'rgba(0,0,0,0.15)', border: 'none', cursor: 'pointer',
+            padding: '5px 6px', borderRadius: 8, lineHeight: 1, display: 'flex', alignItems: 'center',
+          }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            {muted ? (
+              <>
+                <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
+                <line x1="23" y1="9" x2="17" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="17" y1="9" x2="23" y2="15" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+              </>
+            ) : (
+              <>
+                <path d="M11 5L6 9H2v6h4l5 4V5z" fill="#333"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#333" strokeWidth="2.5" strokeLinecap="round"/>
+              </>
+            )}
+          </svg>
+        </button>
 
         {/* HUD — kalp / kalkan */}
         <div style={{ position: 'absolute', left: '50%', top: 16, transform: 'translateX(-50%)', zIndex: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
