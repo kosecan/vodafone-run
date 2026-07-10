@@ -1049,7 +1049,7 @@ export default function VodafoneRunner() {
             }}>
               <div style={{ background: '#E60000', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 16 }}>🏆</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 10, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
+                <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: 13, color: '#fff', letterSpacing: 2 }}>LİDERLİK</span>
               </div>
               <div style={{ padding: '6px 0' }}>
                 {visible.map((entry) => {
@@ -1114,7 +1114,7 @@ export default function VodafoneRunner() {
             <div style={{ width: 300, background: '#fff', borderRadius: 14, overflow: 'hidden', border: '2px solid rgba(230,0,0,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.13)' }}>
               <div style={{ background: '#E60000', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 14 }}>🏆</span>
-                <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
+                <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: 800, fontSize: 12, color: '#fff', letterSpacing: 2 }}>LİDERLİK</span>
               </div>
               <div style={{ padding: '4px 0' }}>
                 {visible.map((entry) => {
