@@ -1000,7 +1000,7 @@ export default function VodafoneRunner() {
         {status === 'ready' && (() => {
           const board = getLeaderboard();
           const userRank = getUserRank(best, board);
-          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALAMANIZ', score: best };
           const fullBoard: LeaderboardEntry[] = [];
           board.forEach(e => {
             if (e.rank < userRank) fullBoard.push(e);
@@ -1009,7 +1009,7 @@ export default function VodafoneRunner() {
           board.forEach(e => {
             if (e.rank >= userRank) fullBoard.push(e);
           });
-          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALAMANIZ');
           const start = Math.max(0, userIdx - 5);
           const end = Math.min(fullBoard.length, userIdx + 6);
           const visible = fullBoard.slice(start, end);
@@ -1053,7 +1053,7 @@ export default function VodafoneRunner() {
               </div>
               <div style={{ padding: '6px 0' }}>
                 {visible.map((entry) => {
-                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  const isUser = entry.name === 'SİZİN SIRALAMANIZ';
                   return (
                     <div key={entry.rank} style={{
                       display: 'flex', alignItems: 'center', gap: 10,
@@ -1083,12 +1083,12 @@ export default function VodafoneRunner() {
         {status === 'over' && (() => {
           const board = getLeaderboard();
           const userRank = getUserRank(best, board);
-          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALANIZ', score: best };
+          const userEntry: LeaderboardEntry = { rank: userRank, name: 'SİZİN SIRALAMANIZ', score: best };
           const fullBoard: LeaderboardEntry[] = [];
           board.forEach(e => { if (e.rank < userRank) fullBoard.push(e); });
           fullBoard.push(userEntry);
           board.forEach(e => { if (e.rank >= userRank) fullBoard.push(e); });
-          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALANIZ');
+          const userIdx = fullBoard.findIndex(e => e.name === 'SİZİN SIRALAMANIZ');
           const start = Math.max(0, userIdx - 4);
           const end = Math.min(fullBoard.length, userIdx + 5);
           const visible = fullBoard.slice(start, end);
@@ -1118,7 +1118,7 @@ export default function VodafoneRunner() {
               </div>
               <div style={{ padding: '4px 0' }}>
                 {visible.map((entry) => {
-                  const isUser = entry.name === 'SİZİN SIRALANIZ';
+                  const isUser = entry.name === 'SİZİN SIRALAMANIZ';
                   return (
                     <div key={entry.rank} style={{
                       display: 'flex', alignItems: 'center', gap: 10,
