@@ -1024,7 +1024,7 @@ export default function VodafoneRunner() {
             </div>
 
             {/* Liderlik tablosu */}
-            <div style={{ width: 300, background: 'rgba(255,255,255,0.07)', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div style={{ width: 300, background: '#fff', borderRadius: 14, overflow: 'hidden', border: '2px solid rgba(230,0,0,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.13)' }}>
               <div style={{ background: '#E60000', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 14 }}>🏆</span>
                 <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: '#fff', letterSpacing: 1 }}>LİDERLİK</span>
@@ -1039,13 +1039,13 @@ export default function VodafoneRunner() {
                       background: isUser ? 'rgba(230,0,0,0.25)' : 'transparent',
                       borderLeft: isUser ? '3px solid #E60000' : '3px solid transparent',
                     }}>
-                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 8, color: isUser ? '#ff8a8a' : '#888', minWidth: 24 }}>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 8, color: isUser ? '#E60000' : '#999', minWidth: 24 }}>
                         #{entry.rank}
                       </span>
-                      <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: isUser ? 700 : 500, fontSize: 12, color: isUser ? '#ffb3b3' : '#ddd', flex: 1 }}>
+                      <span style={{ fontFamily: 'var(--font-outfit), sans-serif', fontWeight: isUser ? 700 : 500, fontSize: 12, color: isUser ? '#c00' : '#444', flex: 1 }}>
                         {isUser ? entry.name : maskName(entry.name)}
                       </span>
-                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: isUser ? '#ffb3b3' : '#aaa' }}>
+                      <span style={{ fontFamily: 'var(--font-press-start), monospace', fontSize: 9, color: isUser ? '#E60000' : '#666' }}>
                         {entry.score}
                       </span>
                     </div>
