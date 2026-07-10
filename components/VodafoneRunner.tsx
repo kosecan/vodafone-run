@@ -179,15 +179,29 @@ export default function VodafoneRunner() {
     function playJump() {
       if (mutedRef.current) return;
       const ctx = getCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(320, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(620, ctx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.18, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-      osc.start(); osc.stop(ctx.currentTime + 0.18);
+      const t = ctx.currentTime;
+
+      // Katman 1: hızlı "boing" — frekans aşağı düşer (arcade spring hissi)
+      const osc1 = ctx.createOscillator();
+      const g1 = ctx.createGain();
+      osc1.connect(g1); g1.connect(ctx.destination);
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(900, t);
+      osc1.frequency.exponentialRampToValueAtTime(280, t + 0.15);
+      g1.gain.setValueAtTime(0.28, t);
+      g1.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      osc1.start(t); osc1.stop(t + 0.18);
+
+      // Katman 2: hafif "click" başlangıç vuruşu
+      const osc2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      osc2.connect(g2); g2.connect(ctx.destination);
+      osc2.type = 'square';
+      osc2.frequency.setValueAtTime(1200, t);
+      osc2.frequency.exponentialRampToValueAtTime(600, t + 0.04);
+      g2.gain.setValueAtTime(0.08, t);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+      osc2.start(t); osc2.stop(t + 0.06);
     }
 
     function playCollect() {
